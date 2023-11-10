@@ -5,7 +5,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.WindowManager
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.Toast
+import com.optic.LZCTransportaConductor.R
 import com.optic.LZCTransportaConductor.databinding.ActivityMainBinding
 import com.optic.LZCTransportaConductor.providers.AuthProvider
 
@@ -13,6 +17,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     val authProvider = AuthProvider()
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,8 +28,10 @@ class MainActivity : AppCompatActivity() {
         window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
 
 
+
         binding.btnRegister.setOnClickListener { goToRegister() }
         binding.btnLogin.setOnClickListener { login() }
+
     }
 
     private fun login() {

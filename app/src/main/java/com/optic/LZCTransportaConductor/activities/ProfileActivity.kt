@@ -4,12 +4,18 @@ import android.app.Activity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.view.WindowManager
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
+import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import com.bumptech.glide.Glide
 import com.github.dhaval2404.imagepicker.ImagePicker
+import com.optic.LZCTransportaConductor.R
 import com.optic.LZCTransportaConductor.databinding.ActivityProfileBinding
 import com.optic.LZCTransportaConductor.models.Driver
 import com.optic.LZCTransportaConductor.providers.AuthProvider
@@ -34,25 +40,66 @@ class ProfileActivity : AppCompatActivity() {
         binding.imageViewBack.setOnClickListener { finish() }
         binding.btnUpdate.setOnClickListener { updateInfo() }
         binding.circleImageProfile.setOnClickListener { selectImage() }
+        //val items = listOf("Flor de abril","5 de mayo","Báscula")
+
+        //val autoComplete : AutoCompleteTextView = findViewById(R.id.auto_complete)
+
+        //val adapter = ArrayAdapter(this, R.layout.activity_profile,items)
+
+        //autoComplete.setAdapter(adapter)
+
+        //autoComplete.onItemClickListener = AdapterView.OnItemClickListener {
+          //      adapterView, view, i, l ->
+           // val itemSelected = adapterView.getItemAtPosition(i)
+            //Toast.makeText(this,"Item: $itemSelected", Toast.LENGTH_SHORT).show()
+        //}
+
+
+        binding.btnOptions.setOnClickListener { showOptionsMenu(it) }
     }
+
+    private fun showOptionsMenu(view: View) {
+        val popupMenu = PopupMenu(this, view)
+        popupMenu.inflate(R.menu.options_menu)
+
+        popupMenu.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.action_option1 -> {
+                    showToast("Opción 1 seleccionada")
+                    true
+                }
+                R.id.action_option2 -> {
+                    showToast("Opción 2 seleccionada")
+                    true
+                }
+                R.id.action_option3 -> {
+                    showToast("Opción 3 seleccionada")
+                    true
+                }
+                else -> false
+            }
+        }
+
+        popupMenu.show()
+    }
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+
+
 
 
     private fun updateInfo() {
 
         val name = binding.textFieldName.text.toString()
         val lastname = binding.textFieldLastname.text.toString()
-        val phone = binding.textFieldPhone.text.toString()
-        val carBrand = binding.textFieldCarBrand.text.toString()
-        val carColor = binding.textFieldCarColor.text.toString()
         val carPlate = binding.textFieldCarPlate.text.toString()
 
         val driver = Driver(
             id = authProvider.getId(),
             name = name,
             lastname = lastname,
-            phone = phone,
-            colorCar = carColor,
-            brandCar = carBrand,
             plateNumber = carPlate
         )
 
@@ -94,9 +141,6 @@ class ProfileActivity : AppCompatActivity() {
                 binding.textViewEmail.text = driver?.email
                 binding.textFieldName.setText(driver?.name)
                 binding.textFieldLastname.setText(driver?.lastname)
-                binding.textFieldPhone.setText(driver?.phone)
-                binding.textFieldCarBrand.setText(driver?.brandCar)
-                binding.textFieldCarColor.setText(driver?.colorCar)
                 binding.textFieldCarPlate.setText(driver?.plateNumber)
 
                 if (driver?.image != null) {

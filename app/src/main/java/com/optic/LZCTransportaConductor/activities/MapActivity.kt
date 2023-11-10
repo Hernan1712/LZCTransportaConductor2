@@ -15,6 +15,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -92,6 +96,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener, SensorEve
             smallestDisplacement = 1f
         }
 
+
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager?
         vectSensor = sensorManager?.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)
 
@@ -109,6 +114,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener, SensorEve
         binding.btnConnect.setOnClickListener { connectDriver() }
         binding.btnDisconnect.setOnClickListener { disconnectDriver() }
         binding.imageViewMenu.setOnClickListener { showModalMenu() }
+
     }
 
     val locationPermissions = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permission ->
@@ -141,6 +147,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener, SensorEve
 
     private fun showModalMenu() {
         modalMenu.show(supportFragmentManager, ModalBottomSheetMenu.TAG)
+
     }
 
     private fun showModalBooking(booking: Booking) {
