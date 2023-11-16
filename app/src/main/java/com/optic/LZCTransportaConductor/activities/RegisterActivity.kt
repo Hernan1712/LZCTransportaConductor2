@@ -43,7 +43,6 @@ class RegisterActivity : AppCompatActivity() {
                         id = authProvider.getId(),
                         name = name,
                         lastname = lastname,
-                        phone = phone,
                         email = email
                     )
                     driverProvider.create(driver).addOnCompleteListener {

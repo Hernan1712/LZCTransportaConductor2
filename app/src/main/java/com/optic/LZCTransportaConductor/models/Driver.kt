@@ -9,17 +9,13 @@ data class Driver (
     val name: String ? = null,
     val lastname: String ? = null,
     val email: String ? = null,
-    val phone: String ? = null,
     var image: String ? = null,
     val plateNumber: String ? = null,
-    val colorCar: String ? = null,
-    val brandCar: String ? = null,
+    var token: String? = null
 ) {
-
-
-    public fun toJson() = klaxon.toJsonString(this)
+    fun toJson() = klaxon.toJsonString(this)
 
     companion object {
-        public fun fromJson(json: String) = klaxon.parse<Client>(json)
+        fun fromJson(json: String) = klaxon.parse<Driver>(json)
     }
 }

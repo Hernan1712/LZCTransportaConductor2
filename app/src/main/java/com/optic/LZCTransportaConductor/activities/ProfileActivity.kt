@@ -6,9 +6,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
@@ -40,19 +37,6 @@ class ProfileActivity : AppCompatActivity() {
         binding.imageViewBack.setOnClickListener { finish() }
         binding.btnUpdate.setOnClickListener { updateInfo() }
         binding.circleImageProfile.setOnClickListener { selectImage() }
-        //val items = listOf("Flor de abril","5 de mayo","Báscula")
-
-        //val autoComplete : AutoCompleteTextView = findViewById(R.id.auto_complete)
-
-        //val adapter = ArrayAdapter(this, R.layout.activity_profile,items)
-
-        //autoComplete.setAdapter(adapter)
-
-        //autoComplete.onItemClickListener = AdapterView.OnItemClickListener {
-          //      adapterView, view, i, l ->
-           // val itemSelected = adapterView.getItemAtPosition(i)
-            //Toast.makeText(this,"Item: $itemSelected", Toast.LENGTH_SHORT).show()
-        //}
 
 
         binding.btnOptions.setOnClickListener { showOptionsMenu(it) }
@@ -65,15 +49,15 @@ class ProfileActivity : AppCompatActivity() {
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_option1 -> {
-                    showToast("Opción 1 seleccionada")
+                    showToast("5 de mayo")
                     true
                 }
                 R.id.action_option2 -> {
-                    showToast("Opción 2 seleccionada")
+                    showToast("Flor de abril")
                     true
                 }
                 R.id.action_option3 -> {
-                    showToast("Opción 3 seleccionada")
+                    showToast("Bascula")
                     true
                 }
                 else -> false
@@ -91,7 +75,6 @@ class ProfileActivity : AppCompatActivity() {
 
 
     private fun updateInfo() {
-
         val name = binding.textFieldName.text.toString()
         val lastname = binding.textFieldLastname.text.toString()
         val carPlate = binding.textFieldCarPlate.text.toString()
@@ -103,36 +86,37 @@ class ProfileActivity : AppCompatActivity() {
             plateNumber = carPlate
         )
 
-        if (imageFile != null) {
-            driverProvider.uploadImage(authProvider.getId(), imageFile!!).addOnSuccessListener { taskSnapshot ->
-                driverProvider.getImageUrl().addOnSuccessListener { url ->
-                    val imageUrl = url.toString()
-                    driver.image = imageUrl
-                    driverProvider.update(driver).addOnCompleteListener {
-                        if (it.isSuccessful) {
-                            Toast.makeText(this@ProfileActivity, "Datos actualizados correctamente", Toast.LENGTH_LONG).show()
+        driverProvider.createToken(authProvider.getId()) { token ->
+            driver.token = token
+
+            if (imageFile != null) {
+                driverProvider.uploadImage(authProvider.getId(), imageFile!!).addOnSuccessListener { taskSnapshot ->
+                    driverProvider.getImageUrl().addOnSuccessListener { url ->
+                        val imageUrl = url.toString()
+                        driver.image = imageUrl
+                        driverProvider.update(driver).addOnCompleteListener { updateTask ->
+                            if (updateTask.isSuccessful) {
+                                Toast.makeText(this@ProfileActivity, "Datos actualizados correctamente", Toast.LENGTH_LONG).show()
+                            } else {
+                                Toast.makeText(this@ProfileActivity, "No se pudo actualizar la información", Toast.LENGTH_LONG).show()
+                            }
                         }
-                        else {
-                            Toast.makeText(this@ProfileActivity, "No se pudo actualizar la informacion", Toast.LENGTH_LONG).show()
-                        }
+                        Log.d("STORAGE", "$imageUrl")
                     }
-                    Log.d("STORAGE", "$imageUrl")
+                }
+            } else {
+                driverProvider.update(driver).addOnCompleteListener { updateTask ->
+                    if (updateTask.isSuccessful) {
+                        Toast.makeText(this@ProfileActivity, "Datos actualizados correctamente", Toast.LENGTH_LONG).show()
+                    } else {
+                        Toast.makeText(this@ProfileActivity, "No se pudo actualizar la información", Toast.LENGTH_LONG).show()
+                    }
                 }
             }
         }
-        else {
-            driverProvider.update(driver).addOnCompleteListener {
-                if (it.isSuccessful) {
-                    Toast.makeText(this@ProfileActivity, "Datos actualizados correctamente", Toast.LENGTH_LONG).show()
-                }
-                else {
-                    Toast.makeText(this@ProfileActivity, "No se pudo actualizar la informacion", Toast.LENGTH_LONG).show()
-                }
-            }
-        }
-
-
     }
+
+
 
     private fun getDriver() {
         driverProvider.getDriver(authProvider.getId()).addOnSuccessListener { document ->

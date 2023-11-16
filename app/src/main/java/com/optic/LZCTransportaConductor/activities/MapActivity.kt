@@ -142,7 +142,12 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener, SensorEve
 
 
     private fun createToken() {
-        driverProvider.createToken(authProvider.getId())
+        driverProvider.createToken(authProvider.getId()) { token ->
+            // Aquí puedes utilizar el token obtenido
+            Log.d("TOKEN", "Token recibido: $token")
+            // También puedes realizar otras operaciones con el token aquí
+        }
+
     }
 
     private fun showModalMenu() {

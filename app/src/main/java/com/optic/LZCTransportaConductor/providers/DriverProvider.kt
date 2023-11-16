@@ -12,6 +12,8 @@ import com.google.firebase.storage.StorageTask
 import com.google.firebase.storage.UploadTask
 import com.optic.LZCTransportaConductor.models.Driver
 import java.io.File
+import com.google.android.gms.tasks.Tasks
+
 
 class DriverProvider {
 
@@ -33,11 +35,12 @@ class DriverProvider {
         }
     }
 
-    fun createToken(idDriver: String) {
-        FirebaseMessaging.getInstance().token.addOnCompleteListener {
-            if (it.isSuccessful) {
-                val token = it.result // TOKEN DE NOTIFICACIONES
+    fun createToken(idDriver: String, onComplete: (String) -> Unit) {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val token = task.result
                 updateToken(idDriver, token)
+                onComplete(token)
             }
         }
     }
@@ -58,15 +61,22 @@ class DriverProvider {
 
     fun update(driver: Driver): Task<Void> {
         val map: MutableMap<String, Any> = HashMap()
-        map["name"] = driver?.name!!
-        map["lastname"] = driver?.lastname!!
-        map["phone"] = driver?.phone!!
-        map["brandCar"] = driver?.brandCar!!
-        map["colorCar"] = driver?.colorCar!!
-        map["plateNumber"] = driver?.plateNumber!!
-        map["image"] = driver?.image!!
-        return db.document(driver?.id!!).update(map)
+        driver.name?.let { map["name"] = it }
+        driver.lastname?.let { map["lastname"] = it }
+        driver.plateNumber?.let { map["plateNumber"] = it }
+        driver.image?.let { map["image"] = it }
+        driver.token?.let { map["token"] = it } // Incluir el campo 'token'
+
+        // Verificar si hay cambios antes de actualizar
+        if (map.isNotEmpty()) {
+            return db.document(driver.id!!).update(map)
+        } else {
+            // No hay cambios para actualizar
+            // Puedes lanzar una tarea completada inmediatamente si no hay cambios
+            return Tasks.forResult(null)
+        }
     }
+
 
 
 }
